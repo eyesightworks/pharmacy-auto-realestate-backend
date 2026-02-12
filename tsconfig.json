@@ -1,17 +1,27 @@
 {
   "compilerOptions": {
     "module": "commonjs",
+    "target": "ES2021",
+    "lib": ["ES2021"],
     "declaration": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
     "removeComments": true,
+    "strict": true,
+    "noImplicitAny": false,
+    "strictPropertyInitialization": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2021",
-    "sourceMap": true,
-    "outDir": "./dist",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "incremental": true,
     "baseUrl": "./",
     "paths": {
       "@common/*": ["src/common/*"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "prisma"]
 }
