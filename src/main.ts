@@ -4,17 +4,21 @@ import { AppModule } from './app.module'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
+  // ✅ Global prefix
   app.setGlobalPrefix('api')
 
+  // ✅ Enable CORS (for frontend later)
   app.enableCors({
-    origin: '*', // replace with your Vercel URL later
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    origin: '*',
+    credentials: true,
   })
 
-  const port = process.env.PORT || 3000
-  await app.listen(port)
+  // ✅ Render provides PORT automatically
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
 
-  console.log(`🚀 Backend running on port ${port}`)
+  await app.listen(port, '0.0.0.0')
+
+  console.log(`🚀 Application is running on: http://localhost:${port}/api`)
 }
+
 bootstrap()
