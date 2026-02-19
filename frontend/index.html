@@ -1,170 +1,268 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Pharmacy / Auto / Real-Estate Admin</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Modular Business Admin Panel</title>
 
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
-    }
+<style>
+:root {
+  --primary:#38bdf8;
+  --dark:#0f172a;
+  --card:#020617;
+  --text:#e5e7eb;
+  --danger:#ef4444;
+}
 
-    h1, h2 {
-      color: #38bdf8;
-    }
+body{
+  margin:0;
+  font-family:system-ui, sans-serif;
+  background:var(--dark);
+  color:var(--text);
+}
 
-    input, button {
-      padding: 10px;
-      margin: 5px 0;
-      width: 100%;
-      border-radius: 6px;
-      border: none;
-    }
+header{
+  background:var(--card);
+  padding:20px;
+  text-align:center;
+  font-size:20px;
+  font-weight:bold;
+  color:var(--primary);
+  box-shadow:0 0 15px rgba(56,189,248,.2);
+}
 
-    button {
-      background: #38bdf8;
-      color: #020617;
-      font-weight: bold;
-      cursor: pointer;
-    }
+.container{
+  max-width:1000px;
+  margin:auto;
+  padding:20px;
+}
 
-    button.danger {
-      background: #ef4444;
-      color: white;
-    }
+.card{
+  background:var(--card);
+  padding:20px;
+  margin:20px 0;
+  border-radius:12px;
+  box-shadow:0 0 15px rgba(56,189,248,.1);
+}
 
-    .card {
-      background: #020617;
-      padding: 16px;
-      margin: 20px 0;
-      border-radius: 12px;
-      box-shadow: 0 0 12px rgba(56,189,248,.2);
-    }
+input,button{
+  width:100%;
+  padding:12px;
+  margin:8px 0;
+  border:none;
+  border-radius:8px;
+  font-size:14px;
+}
 
-    .hidden {
-      display: none;
-    }
+input{
+  background:#1e293b;
+  color:white;
+}
 
-    pre {
-      background: #020617;
-      padding: 10px;
-      overflow-x: auto;
-      border-radius: 6px;
-    }
-  </style>
+button{
+  background:var(--primary);
+  color:black;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+button.danger{
+  background:var(--danger);
+  color:white;
+}
+
+button.secondary{
+  background:#334155;
+  color:white;
+}
+
+.hidden{ display:none }
+
+.flex{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.flex button{
+  flex:1;
+}
+
+pre{
+  background:#111827;
+  padding:15px;
+  border-radius:8px;
+  overflow-x:auto;
+}
+
+.loading{
+  color:var(--primary);
+  font-weight:bold;
+}
+</style>
 </head>
 
 <body>
 
-<h1>🏥 Modular Skills Platform</h1>
+<header>🏥🚗🏠 Modular Multi-Business Admin Panel</header>
 
-<div class="card" id="loginCard">
-  <h2>Login</h2>
-  <input id="email" placeholder="Email" />
-  <input id="password" type="password" placeholder="Password" />
-  <button onclick="login()">Login</button>
-</div>
+<div class="container">
 
-<div class="card hidden" id="userCard">
-  <h2>User Info</h2>
-  <pre id="userInfo"></pre>
-  <button class="danger" onclick="logout()">Logout</button>
-</div>
+  <!-- LOGIN -->
+  <div class="card" id="loginCard">
+    <h2>Login</h2>
+    <input id="email" placeholder="Email"/>
+    <input id="password" type="password" placeholder="Password"/>
+    <button onclick="login()">Login</button>
+  </div>
 
-<div class="card hidden" id="pharmacyCard">
-  <h2>💊 Pharmacy (PHARMACIST)</h2>
-  <input id="productName" placeholder="Product name" />
-  <input id="productPrice" type="number" placeholder="Price" />
-  <button onclick="createProduct()">Create Product</button>
-</div>
+  <!-- USER INFO -->
+  <div class="card hidden" id="userCard">
+    <h2>User Information</h2>
+    <pre id="userInfo"></pre>
+    <div class="flex">
+      <button onclick="loadProducts()">View Products</button>
+      <button onclick="loadVehicles()">View Vehicles</button>
+      <button onclick="loadProperties()">View Properties</button>
+    </div>
+    <button class="danger" onclick="logout()">Logout</button>
+  </div>
 
-<div class="card hidden" id="dataCard">
-  <h2>📦 API Response</h2>
-  <pre id="output"></pre>
+  <!-- PHARMACY -->
+  <div class="card hidden" id="pharmacyCard">
+    <h2>💊 Add Pharmacy Product</h2>
+    <input id="productName" placeholder="Product Name"/>
+    <input id="productPrice" type="number" placeholder="Price"/>
+    <button onclick="createProduct()">Create Product</button>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="card hidden" id="dataCard">
+    <h2>📦 API Response</h2>
+    <div id="loading" class="loading hidden">Loading...</div>
+    <pre id="output"></pre>
+  </div>
+
 </div>
 
 <script>
 
-/* 🔴 IMPORTANT: Replace this with your Render backend URL */
-const API_URL = 'https://YOUR_RENDER_BACKEND_URL/api'
+const API_URL = "https://pharmacy-auto-realestate-backend.onrender.com/api"
 
 let token = null
 let user = null
 
-function setOutput(data) {
-  document.getElementById('output').textContent =
-    JSON.stringify(data, null, 2)
+function showLoading(state){
+  document.getElementById("loading").classList.toggle("hidden", !state)
 }
 
-function parseJwt(token) {
+function setOutput(data){
+  document.getElementById("output").textContent =
+    JSON.stringify(data,null,2)
+}
+
+function parseJwt(token){
   const base64 = token.split('.')[1]
   return JSON.parse(atob(base64))
 }
 
-async function login() {
-  const email = document.getElementById('email').value
-  const password = document.getElementById('password').value
+window.onload = () => {
+  const savedToken = localStorage.getItem("token")
+  if(!savedToken) return
 
-  const res = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  })
-
-  const data = await res.json()
-
-  if (!data.access_token) {
-    alert('Login failed')
-    return
-  }
-
-  token = data.access_token
-  localStorage.setItem('token', token)
+  token = savedToken
   user = parseJwt(token)
-
-  document.getElementById('loginCard').classList.add('hidden')
-  document.getElementById('userCard').classList.remove('hidden')
-  document.getElementById('dataCard').classList.remove('hidden')
-
-  document.getElementById('userInfo').textContent =
-    JSON.stringify(user, null, 2)
-
-  if (user.role === 'PHARMACIST') {
-    document.getElementById('pharmacyCard').classList.remove('hidden')
-  }
-
-  setOutput({ message: 'Logged in successfully' })
+  initializeDashboard()
 }
 
-function logout() {
-  localStorage.removeItem('token')
+function initializeDashboard(){
+  document.getElementById("loginCard").classList.add("hidden")
+  document.getElementById("userCard").classList.remove("hidden")
+  document.getElementById("dataCard").classList.remove("hidden")
+
+  document.getElementById("userInfo").textContent =
+    JSON.stringify(user,null,2)
+
+  if(user.role === "PHARMACIST"){
+    document.getElementById("pharmacyCard").classList.remove("hidden")
+  }
+}
+
+async function login(){
+  try{
+    const email = document.getElementById("email").value
+    const password = document.getElementById("password").value
+
+    showLoading(true)
+
+    const res = await fetch(`${API_URL}/auth/login`,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({email,password})
+    })
+
+    const data = await res.json()
+    showLoading(false)
+
+    if(!data.access_token){
+      alert("Invalid credentials")
+      setOutput(data)
+      return
+    }
+
+    token = data.access_token
+    localStorage.setItem("token",token)
+    user = parseJwt(token)
+    initializeDashboard()
+    setOutput({message:"Login successful"})
+
+  }catch(err){
+    showLoading(false)
+    alert("Server error")
+  }
+}
+
+function logout(){
+  localStorage.removeItem("token")
   location.reload()
 }
 
-async function createProduct() {
-  const name = document.getElementById('productName').value
-  const price = Number(document.getElementById('productPrice').value)
+async function apiGet(endpoint){
+  showLoading(true)
+  const res = await fetch(`${API_URL}${endpoint}`,{
+    headers:{
+      "Authorization": `Bearer ${token}`
+    }
+  })
+  const data = await res.json()
+  showLoading(false)
+  setOutput(data)
+}
 
-  const res = await fetch(`${API_URL}/products`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`,
+function loadProducts(){ apiGet("/products") }
+function loadVehicles(){ apiGet("/vehicles") }
+function loadProperties(){ apiGet("/properties") }
+
+async function createProduct(){
+  const name = document.getElementById("productName").value
+  const price = Number(document.getElementById("productPrice").value)
+
+  showLoading(true)
+
+  const res = await fetch(`${API_URL}/products`,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization": `Bearer ${token}`
     },
-    body: JSON.stringify({ name, price }),
+    body: JSON.stringify({name,price})
   })
 
   const data = await res.json()
+  showLoading(false)
   setOutput(data)
 }
 
 </script>
-
 </body>
 </html>
