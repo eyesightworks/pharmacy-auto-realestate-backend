@@ -12,6 +12,7 @@
   --card:#020617;
   --text:#e5e7eb;
   --danger:#ef4444;
+  --success:#10b981;
 }
 body{
   margin:0;
@@ -54,9 +55,11 @@ button{
   font-weight:bold;
   cursor:pointer;
 }
+button:hover{
+  opacity:.9;
+}
 button.danger{
   background:var(--danger);
-  color:white;
 }
 .hidden{display:none}
 pre{
@@ -69,12 +72,20 @@ pre{
   color:var(--primary);
   font-weight:bold;
 }
+.success{
+  color:var(--success);
+  font-weight:bold;
+}
 .flex{
   display:flex;
   gap:10px;
 }
 .flex button{
   flex:1;
+}
+.small{
+  font-size:14px;
+  opacity:.8;
 }
 </style>
 </head>
@@ -94,23 +105,23 @@ pre{
 
 <!-- DASHBOARD -->
 <div class="card hidden" id="dashboard">
-
-<h2>User Info</h2>
-<pre id="userInfo"></pre>
+<h2>Dashboard</h2>
+<div class="small" id="userDisplay"></div>
 
 <div class="flex">
-<button onclick="loadProducts()">Products</button>
-<button onclick="loadVehicles()">Vehicles</button>
-<button onclick="loadProperties()">Properties</button>
+<button onclick="loadProducts()">💊 Products</button>
+<button onclick="loadVehicles()">🚗 Vehicles</button>
+<button onclick="loadProperties()">🏠 Properties</button>
 </div>
 
 <button class="danger" onclick="logout()">Logout</button>
-
 </div>
 
+<!-- RESPONSE -->
 <div class="card hidden" id="responseCard">
 <h2>📦 API Response</h2>
 <div id="loading" class="loading hidden">Loading...</div>
+<div id="statusMessage"></div>
 <pre id="output"></pre>
 </div>
 
@@ -122,6 +133,8 @@ const API_URL = "https://pharmacy-auto-realestate-backend.onrender.com/api"
 let token = null
 let user = null
 
+/* ---------------- UTILITIES ---------------- */
+
 function showLoading(show){
   document.getElementById("loading").classList.toggle("hidden", !show)
 }
@@ -131,13 +144,22 @@ function setOutput(data){
     JSON.stringify(data,null,2)
 }
 
+function setStatus(message, type=""){
+  const el = document.getElementById("statusMessage")
+  el.className = type
+  el.textContent = message
+}
+
 function parseJwt(token){
   try{
-    return JSON.parse(atob(token.split('.')[1]))
+    const base64 = token.split('.')[1]
+    return JSON.parse(atob(base64))
   }catch{
     return null
   }
 }
+
+/* ---------------- INIT ---------------- */
 
 window.onload = ()=>{
   const saved = localStorage.getItem("token")
@@ -158,9 +180,12 @@ function openDashboard(){
   document.getElementById("loginCard").classList.add("hidden")
   document.getElementById("dashboard").classList.remove("hidden")
   document.getElementById("responseCard").classList.remove("hidden")
-  document.getElementById("userInfo").textContent =
-    JSON.stringify(user,null,2)
+
+  document.getElementById("userDisplay").textContent =
+    `Logged in as: ${user.email} | Role: ${user.role}`
 }
+
+/* ---------------- AUTH ---------------- */
 
 async function login(){
   const email = document.getElementById("email").value
@@ -172,6 +197,7 @@ async function login(){
   }
 
   showLoading(true)
+  setStatus("")
 
   try{
     const res = await fetch(`${API_URL}/auth/login`,{
@@ -184,20 +210,22 @@ async function login(){
     showLoading(false)
 
     if(!res.ok){
+      setStatus("Login failed","")
       setOutput(data)
-      alert("Login failed")
       return
     }
 
     token = data.access_token
     localStorage.setItem("token",token)
     user = parseJwt(token)
+
     openDashboard()
-    setOutput({message:"Logged in successfully"})
+    setStatus("Login successful","success")
+    setOutput({message:"Welcome!"})
 
   }catch(err){
     showLoading(false)
-    alert("Server error")
+    alert("Server error. Backend may be sleeping (Render free tier). Try again.")
   }
 }
 
@@ -206,8 +234,12 @@ function logout(){
   location.reload()
 }
 
+/* ---------------- API CALL ---------------- */
+
 async function apiGet(endpoint){
   showLoading(true)
+  setStatus("")
+  setOutput({})
 
   try{
     const res = await fetch(`${API_URL}${endpoint}`,{
@@ -218,18 +250,27 @@ async function apiGet(endpoint){
     showLoading(false)
 
     if(res.status === 401){
-      alert("Unauthorized. Your token may be expired.")
+      alert("Session expired. Please login again.")
       logout()
       return
     }
 
+    if(!res.ok){
+      setStatus("API Error")
+      setOutput(data)
+      return
+    }
+
+    setStatus("Request successful","success")
     setOutput(data)
 
   }catch{
     showLoading(false)
-    alert("Request failed")
+    alert("Request failed. Backend may be down.")
   }
 }
+
+/* ---------------- BUTTONS ---------------- */
 
 function loadProducts(){ apiGet("/products") }
 function loadVehicles(){ apiGet("/vehicles") }
