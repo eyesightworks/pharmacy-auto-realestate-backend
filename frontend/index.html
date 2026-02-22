@@ -24,6 +24,7 @@ background:#1e293b;
 padding:40px;
 border-radius:16px;
 width:400px;
+max-width:95%;
 box-shadow:0 20px 50px rgba(0,0,0,0.4);
 }
 
@@ -56,6 +57,7 @@ background:#3b82f6;
 color:white;
 font-weight:600;
 cursor:pointer;
+margin-bottom:10px;
 }
 
 button:hover{
@@ -75,8 +77,11 @@ font-size:13px;
 }
 
 .logout{
-margin-top:15px;
 background:#ef4444;
+}
+
+.logout:hover{
+background:#dc2626;
 }
 
 .api-box{
@@ -87,6 +92,7 @@ border-radius:8px;
 font-size:12px;
 overflow:auto;
 max-height:200px;
+white-space:pre-wrap;
 }
 </style>
 </head>
@@ -121,6 +127,7 @@ max-height:200px;
 
 <script>
 
+// 🔥 PRODUCTION BACKEND URL
 const API = "https://pharmacy-auto-realestate-backend.onrender.com/api"
 
 function saveToken(token){
@@ -140,11 +147,16 @@ async function login(){
 const email=document.getElementById("email").value
 const password=document.getElementById("password").value
 
+try{
 const res = await fetch(API+"/auth/login",{
 method:"POST",
 headers:{"Content-Type":"application/json"},
 body:JSON.stringify({email,password})
 })
+
+if(!res.ok){
+throw new Error("Login failed")
+}
 
 const data = await res.json()
 
@@ -154,6 +166,18 @@ showDashboard()
 }else{
 alert("Invalid Login")
 }
+
+}catch(err){
+alert("Server error. Check backend.")
+}
+}
+
+function parseJwt(token){
+try{
+return JSON.parse(atob(token.split(".")[1]))
+}catch{
+return null
+}
 }
 
 function showDashboard(){
@@ -161,22 +185,34 @@ document.getElementById("loginSection").style.display="none"
 document.getElementById("dashboard").style.display="block"
 
 const token = getToken()
-const payload = JSON.parse(atob(token.split(".")[1]))
+const payload = parseJwt(token)
 
+if(payload){
 document.getElementById("userInfo").innerHTML = `
 <b>User Info</b><br>
 Email: ${payload.email}<br>
 Role: ${payload.role}
 `
 }
+}
 
 async function apiGet(endpoint){
+try{
 const res = await fetch(API+endpoint,{
 headers:{
 Authorization:"Bearer "+getToken()
 }
 })
+
+if(!res.ok){
+throw new Error("Request failed")
+}
+
 return await res.json()
+
+}catch(err){
+return { error: "Backend not reachable or unauthorized." }
+}
 }
 
 async function loadVehicles(){
@@ -189,6 +225,7 @@ const data = await apiGet("/products")
 document.getElementById("apiResponse").innerText = JSON.stringify(data,null,2)
 }
 
+// Auto login if token exists
 if(getToken()){
 showDashboard()
 }
