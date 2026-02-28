@@ -3,22 +3,23 @@
     "module": "commonjs",
     "target": "ES2021",
     "lib": ["ES2021"],
-    "declaration": true,
+
+    "declaration": false,
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./src",
+
     "removeComments": true,
     "strict": true,
-    "noImplicitAny": false,
-    "strictPropertyInitialization": true,
+    "strictPropertyInitialization": false,
+
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
+
     "incremental": true,
 
-    // 🔥 THIS IS THE IMPORTANT PART
     "baseUrl": "./src",
     "paths": {
       "@common/*": ["common/*"],
@@ -27,5 +28,11 @@
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "prisma"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "prisma",
+    "test",
+    "**/*.spec.ts"
+  ]
 }

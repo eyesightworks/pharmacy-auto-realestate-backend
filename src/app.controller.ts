@@ -1,12 +1,21 @@
 import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  root() {
+    return {
+      message: "Eyesightworks API is running",
+      status: "OK",
+      endpoints: {
+        auth: "/api/auth/login",
+        vehicles: "/api/vehicles",
+        properties: "/api/properties",
+        products: "/api/products",
+        cloudinary: "/api/cloudinary/sign"
+      }
+    };
   }
+
 }
