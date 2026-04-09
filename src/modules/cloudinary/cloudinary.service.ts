@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class CloudinaryService {
-  signUpload(public_id: string) {
+  signUpload() {
 
     console.log("ENV CHECK:", {
       cloud: process.env.CLOUDINARY_CLOUD_NAME,
@@ -22,11 +22,10 @@ export class CloudinaryService {
       throw new Error('Cloudinary env variables missing');
     }
 
+    // ✅ MATCHES FRONTEND EXACTLY
     const signature = crypto
       .createHash('sha1')
-      .update(
-        `folder=${folder}&public_id=${public_id}&timestamp=${timestamp}${apiSecret}`
-      )
+      .update(`folder=${folder}&timestamp=${timestamp}${apiSecret}`)
       .digest('hex');
 
     return {

@@ -7,6 +7,7 @@
     "declaration": false,
     "sourceMap": true,
     "outDir": "./dist",
+    "rootDir": "./src",
 
     "removeComments": true,
     "strict": true,
@@ -25,7 +26,9 @@
       "@common/*": ["common/*"],
       "@database/*": ["database/*"],
       "@modules/*": ["modules/*"]
-    }
+    },
+
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src/**/*"],
   "exclude": [
