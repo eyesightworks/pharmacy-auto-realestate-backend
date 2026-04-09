@@ -3,20 +3,30 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class CloudinaryService {
-  signUpload() {
+  signUpload(public_id: string) {
+
+    console.log("ENV CHECK:", {
+      cloud: process.env.CLOUDINARY_CLOUD_NAME,
+      key: process.env.CLOUDINARY_API_KEY,
+      secret: process.env.CLOUDINARY_API_SECRET,
+    });
+
     const timestamp = Math.round(Date.now() / 1000);
+    const folder = 'eyesightworks';
 
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
     const apiKey = process.env.CLOUDINARY_API_KEY;
     const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
 
     if (!apiSecret || !apiKey || !cloudName) {
-      throw new Error('Cloudinary environment variables are missing');
+      throw new Error('Cloudinary env variables missing');
     }
 
     const signature = crypto
       .createHash('sha1')
-      .update(`timestamp=${timestamp}&folder=eyesightworks${apiSecret}`)
+      .update(
+        `folder=${folder}&public_id=${public_id}&timestamp=${timestamp}${apiSecret}`
+      )
       .digest('hex');
 
     return {
@@ -24,7 +34,7 @@ export class CloudinaryService {
       signature,
       api_key: apiKey,
       cloud_name: cloudName,
-      folder: 'eyesightworks',
+      folder,
     };
   }
 }

@@ -1,9 +1,10 @@
-import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { Module } from '@nestjs/common'
+import { JwtModule } from '@nestjs/jwt'
 
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { PrismaModule } from '../../database/prisma.module';
+import { AuthService } from './auth.service'
+import { AuthController } from './auth.controller'
+import { PrismaModule } from '../../database/prisma.module'
+import { JwtStrategy } from './strategies/jwt.strategy'
 
 @Module({
   imports: [
@@ -13,7 +14,10 @@ import { PrismaModule } from '../../database/prisma.module';
       signOptions: { expiresIn: '1d' },
     }),
   ],
-  providers: [AuthService],
+  providers: [
+    AuthService,
+    JwtStrategy, // ✅ VERY IMPORTANT (this fixes your error)
+  ],
   controllers: [AuthController],
   exports: [JwtModule],
 })

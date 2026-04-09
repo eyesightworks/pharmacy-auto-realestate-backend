@@ -6,52 +6,58 @@ import {
   Delete,
   Param,
   Body,
+  Request,
   UseGuards,
-} from '@nestjs/common'
-import { PropertiesService } from './properties.service'
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard'
-import { RolesGuard } from '../../auth/guards/roles.guard'
-import { Roles } from '@common/decorators/roles.decorator'
-import { Public } from '@common/decorators/public.decorator'
-import { Role } from '@prisma/client'
+} from '@nestjs/common';
+
+import { PropertiesService } from './properties.service';
+import { CreatePropertyDto } from './dto/create-property.dto';
+import { UpdatePropertyDto } from './dto/update-property.dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @Controller('properties')
-@UseGuards(JwtAuthGuard, RolesGuard)
 export class PropertiesController {
   constructor(private readonly propertiesService: PropertiesService) {}
 
-  // 🔓 Public
-  @Public()
+  // ✅ PUBLIC
   @Get()
   findAll() {
-    return this.propertiesService.findAll()
+    return this.propertiesService.findAll();
   }
 
-  // 🔓 Public
-  @Public()
+  // ✅ PUBLIC
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.propertiesService.findOne(id)
+    return this.propertiesService.findOne(id);
   }
 
-  // 🔒 Admin & Agent
-  @Roles(Role.ADMIN, Role.AGENT)
+  // 🔒 CREATE
   @Post()
-  create(@Body() data: any) {
-    return this.propertiesService.create(data)
+  @UseGuards(JwtAuthGuard)
+  create(
+    @Body() data: CreatePropertyDto,
+    @Request() req: any,
+  ) {
+    console.log('USER:', req.user); // 🔥 VERY IMPORTANT
+
+    return this.propertiesService.create(data, req.user?.id);
   }
 
-  // 🔒 Admin & Agent
-  @Roles(Role.ADMIN, Role.AGENT)
+  // 🔒 UPDATE
   @Patch(':id')
-  update(@Param('id') id: string, @Body() data: any) {
-    return this.propertiesService.update(id, data)
+  @UseGuards(JwtAuthGuard)
+  update(
+    @Param('id') id: string,
+    @Body() data: UpdatePropertyDto,
+    @Request() req: any,
+  ) {
+    return this.propertiesService.update(id, data, req.user);
   }
 
-  // 🔒 Admin only
-  @Roles(Role.ADMIN)
+  // 🔒 DELETE
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: string) {
-    return this.propertiesService.remove(id)
+    return this.propertiesService.remove(id);
   }
 }

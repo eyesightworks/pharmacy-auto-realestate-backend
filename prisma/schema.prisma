@@ -8,20 +8,58 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  password  String
-  role      Role     @default(AGENT)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String     @id @default(uuid())
+  email      String     @unique
+  password   String
+  role       Role       @default(CUSTOMER)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  bookings   Booking[]
+  properties Property[] @relation("AgentProperties")
+
+  @@index([email])
+}
+
+model Property {
+  id          String         @id @default(uuid())
+  title       String
+  price       Float
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  agentId     String
+  description String?
+  location    String?
+  status      PropertyStatus @default(AVAILABLE)
+  imageUrl    String?
+  bookings    Booking[]
+  agent       User           @relation("AgentProperties", fields: [agentId], references: [id])
+
+  @@index([agentId])
+  @@index([status])
+}
+
+model Booking {
+  id         String        @id @default(uuid())
+  userId     String
+  propertyId String
+  status     BookingStatus @default(PENDING)
+  createdAt  DateTime      @default(now())
+  property   Property      @relation(fields: [propertyId], references: [id])
+  user       User          @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([propertyId])
 }
 
 model Product {
-  id        String   @id @default(uuid())
-  name      String
-  price     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          String   @id @default(uuid())
+  name        String
+  price       Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String?
+  stock       Int      @default(0)
+  imageUrl    String?
 }
 
 model Vehicle {
@@ -30,18 +68,26 @@ model Vehicle {
   price     Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model Property {
-  id        String   @id @default(uuid())
-  title     String
-  price     Float
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  model     String?
+  status    String?
+  imageUrl  String?
 }
 
 enum Role {
   ADMIN
   PHARMACIST
   AGENT
+  CUSTOMER
+}
+
+enum PropertyStatus {
+  AVAILABLE
+  SOLD
+  RENTED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
 }
