@@ -3,13 +3,7 @@ import * as crypto from 'crypto';
 
 @Injectable()
 export class CloudinaryService {
-  signUpload() {
-
-    console.log("ENV CHECK:", {
-      cloud: process.env.CLOUDINARY_CLOUD_NAME,
-      key: process.env.CLOUDINARY_API_KEY,
-      secret: process.env.CLOUDINARY_API_SECRET,
-    });
+  signUpload(body: { public_id: string }) {
 
     const timestamp = Math.round(Date.now() / 1000);
     const folder = 'eyesightworks';
@@ -22,10 +16,14 @@ export class CloudinaryService {
       throw new Error('Cloudinary env variables missing');
     }
 
-    // ✅ MATCHES FRONTEND EXACTLY
+    const public_id = body.public_id;
+
+    // ✅ MUST MATCH FRONTEND EXACTLY
     const signature = crypto
       .createHash('sha1')
-      .update(`folder=${folder}&timestamp=${timestamp}${apiSecret}`)
+      .update(
+        `folder=${folder}&public_id=${public_id}&timestamp=${timestamp}${apiSecret}`
+      )
       .digest('hex');
 
     return {
@@ -34,6 +32,7 @@ export class CloudinaryService {
       api_key: apiKey,
       cloud_name: cloudName,
       folder,
+      public_id // ✅ IMPORTANT
     };
   }
 }
