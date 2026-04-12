@@ -12,7 +12,6 @@ import { UpdatePropertyDto } from './dto/update-property.dto';
 export class PropertiesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // ✅ CREATE PROPERTY
   async create(data: CreatePropertyDto, userId: string) {
     if (!userId) {
       throw new ForbiddenException('User not authenticated');
@@ -20,18 +19,12 @@ export class PropertiesService {
 
     return this.prisma.property.create({
       data: {
-        title: data.title,
-        description: data.description,
-        price: data.price,
-        location: data.location,
-        status: data.status,
-        imageUrl: data.imageUrl,   // ✅ IMPORTANT
+        ...data,
         agentId: userId,
       },
     });
   }
 
-  // ✅ GET ALL (🔥 FIXED HERE)
   async findAll() {
     return this.prisma.property.findMany({
       orderBy: { createdAt: 'desc' },
@@ -40,7 +33,7 @@ export class PropertiesService {
         title: true,
         price: true,
         location: true,
-        imageUrl: true,   // ✅ THIS WAS MISSING
+        imageUrl: true,
         status: true,
         createdAt: true,
         updatedAt: true,
@@ -48,7 +41,6 @@ export class PropertiesService {
     });
   }
 
-  // ✅ GET ONE
   async findOne(id: string) {
     const property = await this.prisma.property.findUnique({
       where: { id },
@@ -61,26 +53,19 @@ export class PropertiesService {
     return property;
   }
 
-  // ✅ UPDATE
   async update(id: string, data: UpdatePropertyDto, user: any) {
     const property = await this.findOne(id);
 
     if (user.role !== 'ADMIN' && property.agentId !== user.id) {
-      throw new ForbiddenException(
-        'You can only update your own property',
-      );
+      throw new ForbiddenException('Not allowed');
     }
 
     return this.prisma.property.update({
       where: { id },
-      data: {
-        ...data,
-        imageUrl: data.imageUrl, // ✅ ensure update works
-      },
+      data,
     });
   }
 
-  // ✅ DELETE
   async remove(id: string) {
     await this.findOne(id);
 

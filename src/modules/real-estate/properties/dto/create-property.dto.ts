@@ -25,7 +25,6 @@ export class CreatePropertyDto {
   @IsString()
   imageUrl?: string;
 
-  @IsOptional()
-  @IsString()
-  public_id?: string;
+  // ❌ REMOVE THIS COMPLETELY
+  // public_id?: string;
 }

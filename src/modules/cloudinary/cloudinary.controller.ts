@@ -7,6 +7,10 @@ export class CloudinaryController {
 
   @Post('sign')
   signUpload(@Body() body: { public_id: string }) {
+    if (!body.public_id) {
+      throw new Error('public_id is required');
+    }
+
     return this.cloudinaryService.signUpload(body);
   }
 }
