@@ -11,7 +11,7 @@ export class CreatePropertyDto {
   description?: string;
 
   @Type(() => Number)
-  @IsNumber()
+  @IsNumber({}, { message: 'Price must be a number' })
   price: number;
 
   @IsString()
@@ -24,7 +24,4 @@ export class CreatePropertyDto {
   @IsOptional()
   @IsString()
   imageUrl?: string;
-
-  // ❌ REMOVE THIS COMPLETELY
-  // public_id?: string;
 }

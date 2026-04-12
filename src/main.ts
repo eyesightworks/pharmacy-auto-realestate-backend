@@ -1,14 +1,16 @@
-import { NestFactory } from '@nestjs/core'
-import { AppModule } from './app.module'
-import { ValidationPipe } from '@nestjs/common'
-import { join } from 'path'
-import * as express from 'express'
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
+import { join } from 'path';
+import * as express from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule)
+  const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix('api')
+  // ✅ GLOBAL PREFIX
+  app.setGlobalPrefix('api');
 
+  // ✅ CORS (production safe)
   app.enableCors({
     origin: [
       'https://frontend-eight-mocha-89.vercel.app',
@@ -18,8 +20,9 @@ async function bootstrap() {
     ],
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     credentials: true,
-  })
+  });
 
+  // ✅ VALIDATION (VERY IMPORTANT)
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -29,17 +32,24 @@ async function bootstrap() {
         enableImplicitConversion: true,
       },
     }),
-  )
+  );
 
-  app.use('/uploads', express.static(join(__dirname, '..', 'uploads')))
+  // ✅ STATIC FILES (optional since using Cloudinary)
+  app.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
 
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
+  // ✅ BODY SIZE LIMIT (important for future uploads)
+  app.use(express.json({ limit: '10mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-  await app.listen(port, '0.0.0.0')
+  // ✅ PORT (Render compatible)
+  const port = process.env.PORT || 3000;
 
-  console.log('🚀 Backend Started')
-  console.log(`🌐 Port: ${port}`)
-  console.log(`📡 API: http://localhost:${port}/api`)
+  await app.listen(port, '0.0.0.0');
+
+  // ✅ CLEAN LOGS (production safe)
+  console.log('🚀 Backend Started');
+  console.log(`🌐 Running on port ${port}`);
+  console.log(`📡 API prefix: /api`);
 }
 
-bootstrap()
+bootstrap();
