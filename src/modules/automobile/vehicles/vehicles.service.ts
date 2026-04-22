@@ -14,9 +14,9 @@ export class VehiclesService {
     return this.prisma.vehicle.findMany();
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     const vehicle = await this.prisma.vehicle.findUnique({
-      where: { id: String(id) },
+      where: { id },
     });
 
     if (!vehicle) {
@@ -26,9 +26,9 @@ export class VehiclesService {
     return vehicle;
   }
 
-  async update(id: number, data: Prisma.VehicleUpdateInput) {
+  async update(id: string, data: Prisma.VehicleUpdateInput) {
     const vehicle = await this.prisma.vehicle.findUnique({
-      where: { id: String(id) },
+      where: { id },
     });
 
     if (!vehicle) {
@@ -36,14 +36,14 @@ export class VehiclesService {
     }
 
     return this.prisma.vehicle.update({
-      where: { id: String(id) },
+      where: { id },
       data,
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const vehicle = await this.prisma.vehicle.findUnique({
-      where: { id: String(id) },
+      where: { id },
     });
 
     if (!vehicle) {
@@ -51,7 +51,7 @@ export class VehiclesService {
     }
 
     return this.prisma.vehicle.delete({
-      where: { id: String(id) },
+      where: { id },
     });
   }
 }

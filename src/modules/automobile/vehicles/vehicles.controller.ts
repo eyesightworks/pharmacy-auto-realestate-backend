@@ -2,49 +2,57 @@ import {
   Controller,
   Get,
   Post,
-  Put,
+  Patch,
   Delete,
   Param,
   Body,
   UseGuards,
-} from '@nestjs/common'
-import { VehiclesService } from './vehicles.service'
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard'
-import { RolesGuard } from '../../auth/guards/roles.guard'
-import { Roles } from '@common/decorators/roles.decorator'
-import { Public } from '@common/decorators/public.decorator'
-import { Role } from '@prisma/client'
+} from '@nestjs/common';
+
+import { VehiclesService } from './vehicles.service';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Roles } from '@common/decorators/roles.decorator';
+import { Public } from '@common/decorators/public.decorator';
+import { Role } from '@prisma/client';
 
 @Controller('vehicles')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class VehiclesController {
   constructor(private readonly vehiclesService: VehiclesService) {}
 
-  // 🔓 PUBLIC - Anyone can view vehicles
+  // 🔓 PUBLIC
   @Public()
   @Get()
   findAll() {
-    return this.vehiclesService.findAll()
+    return this.vehiclesService.findAll();
   }
 
-  // 🔒 ADMIN & AGENT can create vehicle
+  // 🔓 PUBLIC
+  @Public()
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.vehiclesService.findOne(id);
+  }
+
+  // 🔒 CREATE
   @Roles(Role.ADMIN, Role.AGENT)
   @Post()
   create(@Body() data: any) {
-    return this.vehiclesService.create(data)
+    return this.vehiclesService.create(data);
   }
 
-  // 🔒 ADMIN & AGENT can update vehicle
+  // 🔒 UPDATE (✅ PATCH like Properties)
   @Roles(Role.ADMIN, Role.AGENT)
-  @Put(':id')
+  @Patch(':id')
   update(@Param('id') id: string, @Body() data: any) {
-    return this.vehiclesService.update(Number(id), data)
+    return this.vehiclesService.update(id, data);
   }
 
-  // 🔒 ADMIN only can delete vehicle
+  // 🔒 DELETE
   @Roles(Role.ADMIN)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.vehiclesService.remove(Number(id))
+    return this.vehiclesService.remove(id);
   }
 }
