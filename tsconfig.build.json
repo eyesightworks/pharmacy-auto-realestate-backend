@@ -1,5 +1,39 @@
 {
-  "extends": "./tsconfig.json",
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "test", "**/*spec.ts", "prisma"]
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2021",
+    "outDir": "./dist",
+    "declaration": false,
+    "sourceMap": true,
+
+    "baseUrl": "./src",
+    "paths": {
+      "@common/*": ["common/*"],
+      "@database/*": ["database/*"],
+      "@modules/*": ["modules/*"]
+    },
+
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "noEmit": false
+  },
+
+  "files": [
+    "src/main.ts",
+    "src/app.module.ts",
+    "src/app.controller.ts",
+    "src/app.service.ts"
+  ],
+
+  "include": ["src/**/*.ts"],
+
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "**/*.spec.ts",
+    "prisma"
+  ]
 }

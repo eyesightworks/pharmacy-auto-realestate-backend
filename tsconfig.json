@@ -28,9 +28,11 @@
       "@modules/*": ["modules/*"]
     },
 
-    "types": ["node"]   // ✅ THIS LINE FIXES YOUR ERROR
+    "types": ["node"],
+
+    "noEmit": false
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",
