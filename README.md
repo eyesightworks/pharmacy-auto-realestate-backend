@@ -8,7 +8,7 @@ This project demonstrates a complete backend workflow including authentication, 
 
 # System Architecture
 
-<img src="your-project/backennd.png" alt="EyesightWorks Backend System Screenshot">
+<img src="image/backennd.png" alt="EyesightWorks Backend System Screenshot">
 
 ---
 
@@ -20,7 +20,7 @@ This project demonstrates a complete backend workflow including authentication, 
 * PostgreSQL Database Integration
 * Prisma ORM
 * Cloudinary Image Upload
-* Admin Login System
+* Admin Authentication System
 * CRUD Operations
 * Backend Logging
 * Multi-Entity Management
@@ -43,15 +43,15 @@ This project demonstrates a complete backend workflow including authentication, 
 
 # Installation
 
-```bash id="8x3qg3"
+```bash
 git clone https://github.com/eyesightworks/pharmacy-auto-realestate-backend.git
 ```
 
-```bash id="w72hru"
+```bash
 cd pharmacy-auto-realestate-backend
 ```
 
-```bash id="3pcxgq"
+```bash
 npm install
 ```
 
@@ -61,13 +61,13 @@ npm install
 
 ## Development Mode
 
-```bash id="2g5wj4"
+```bash
 npm run start:dev
 ```
 
 ## Production Mode
 
-```bash id="jv9ig8"
+```bash
 npm run start:prod
 ```
 
@@ -77,11 +77,11 @@ npm run start:prod
 
 Create a `.env` file in the root directory:
 
-```env id="5h9zcf"
-PORT=4000
+```env
 DATABASE_URL=your_database_url
 JWT_SECRET=your_secret
 CLOUDINARY_URL=your_cloudinary_url
+PORT=4000
 ```
 
 ---
@@ -100,7 +100,7 @@ CLOUDINARY_URL=your_cloudinary_url
 
 # Backend Workflow
 
-JWT Authentication → Protected Routes → Database Persistence → Cloudinary Upload → Prisma ORM → PostgreSQL Storage
+JWT Authentication → Protected Routes → Prisma ORM → PostgreSQL Database → Cloudinary Upload → Frontend Display
 
 ---
 
