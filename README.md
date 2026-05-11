@@ -1,8 +1,8 @@
-# EyesightWorks Full-Stack Backend Architecture
+# EyesightWorks Real Estate Backend System
 
 A scalable production-ready backend system built with NestJS, TypeScript, Prisma ORM, PostgreSQL, Cloudinary, and JWT authentication.
 
-This project demonstrates a complete backend workflow including authentication, protected API routes, image uploads, database persistence, admin management, and modular API architecture.
+This project demonstrates a complete backend engineering workflow including authentication systems, protected API routes, image uploads, database persistence, admin management, and modular RESTful API architecture for scalable business applications.
 
 ---
 
@@ -12,127 +12,84 @@ This project demonstrates a complete backend workflow including authentication, 
 
 ---
 
-# Features
+# Project Overview
 
-* JWT Authentication
-* Protected API Routes
-* RESTful API Architecture
-* PostgreSQL Database Integration
-* Prisma ORM
-* Cloudinary Image Upload
-* Admin Authentication System
-* CRUD Operations
-* Backend Logging
-* Multi-Entity Management
-* Scalable Modular Architecture
+This backend platform was designed to support scalable business management systems including:
+
+- Real Estate Management
+- Property Listing Platforms
+- Booking Systems
+- Product Management
+- Vehicle Listings
+- Pharmacy Management
+- Admin Dashboard Operations
+
+The system follows a modular backend architecture using NestJS and Prisma ORM for scalability, maintainability, clean architecture, and structured API development.
+
+---
+
+# Core Features
+
+- JWT Authentication
+- Role-Based Access Control (RBAC)
+- Protected API Routes
+- RESTful API Architecture
+- PostgreSQL Database Integration
+- Prisma ORM
+- Cloudinary Image Upload Integration
+- Admin Authentication System
+- CRUD Operations
+- Backend Logging
+- Multi-Entity Management
+- Request Validation
+- Error Handling & Validation
+- Secure Environment Variable Management
+- Modular Scalable Architecture
+- Media Upload Workflow
+- Production-Ready Backend Structure
 
 ---
 
 # Tech Stack
 
-* NestJS
-* TypeScript
-* Node.js
-* PostgreSQL
-* Prisma ORM
-* JWT Authentication
-* Cloudinary
-* Thunder Client
+## Backend Framework
+- NestJS
+- Node.js
+- TypeScript
+
+## Database & ORM
+- PostgreSQL
+- Prisma ORM
+
+## Authentication & Security
+- JWT Authentication
+- Role-Based Authorization
+
+## Cloud & Media
+- Cloudinary
+
+## Deployment & Hosting
+- Vercel
+- Render
+- Neon PostgreSQL
+
+## Development Tools
+- Thunder Client
+- Git & GitHub
 
 ---
 
-# Installation
+# Project Structure
 
 ```bash
-git clone https://github.com/eyesightworks/pharmacy-auto-realestate-backend.git
-```
-
-```bash
-cd pharmacy-auto-realestate-backend
-```
-
-```bash
-npm install
-```
-
----
-
-# Running the Application
-
-## Development Mode
-
-```bash
-npm run start:dev
-```
-
-## Production Mode
-
-```bash
-npm run start:prod
-```
-
----
-
-# Environment Variables
-
-Create a `.env` file in the root directory:
-
-```env
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret
-CLOUDINARY_URL=your_cloudinary_url
-PORT=4000
-```
-
----
-
-# API Modules
-
-* Authentication
-* Users
-* Properties
-* Vehicles
-* Pharmacy
-* Booking
-* Upload Management
-
----
-
-# Backend Workflow
-
-JWT Authentication → Protected Routes → Prisma ORM → PostgreSQL Database → Cloudinary Upload → Frontend Display
-
----
-
-# Project Highlights
-
-* Secure authentication system using JWT
-* Cloud-based media upload workflow
-* Structured scalable backend architecture
-* Database management with Prisma ORM
-* Production-ready modular API system
-
----
-
-# Live Demo
-
-Frontend:
-https://eyesight-realestate.vercel.app
-
-Admin Panel:
-https://frontend-eight-mocha-89.vercel.app
-
----
-
-# GitHub Repository
-
-https://github.com/eyesightworks/pharmacy-auto-realestate-backend
-
----
-
-# Author
-
-Alawode Adewale Afeez
-
-GitHub:
-https://github.com/eyesightworks
+src/
+├── auth/
+├── users/
+├── properties/
+├── booking/
+├── pharmacy/
+├── vehicles/
+├── upload/
+├── prisma/
+├── common/
+└── main.ts
