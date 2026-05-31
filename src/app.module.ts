@@ -7,6 +7,7 @@ import { PharmacyModule } from './modules/pharmacy/pharmacy.module';
 import { AutomobileModule } from './modules/automobile/automobile.module';
 import { RealEstateModule } from './modules/real-estate/real-estate.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
+import { AiModule } from './modules/ai/ai.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
     AutomobileModule,
     RealEstateModule,
     CloudinaryModule,
+    AiModule,
   ],
 })
 export class AppModule {}
